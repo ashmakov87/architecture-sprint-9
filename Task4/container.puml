@@ -1,0 +1,30 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+
+Person(client, "Клиент")
+
+System_Boundary(bank, "Система банка") {
+    Container(apiGateway, "API шлюз", "Spring Boot")
+    Container(rateService, "Сервис ставок", "MS SQL, Oracle")
+    Container(fileGenerator, "Генерация файлов ставок", "Python")
+}
+
+System_Boundary(callCenter, "Кол-центр") {
+    Container(callCenterSystem, "Система кол-центра", "Java, Spring Boot")
+}
+
+System_Ext(sftpServer, "SFTP-сервер", "Файл-сервер")
+System_Ext(partnerCallCenter, "Партнёрский кол-центр", "Внешняя система")
+
+client -> callCenterSystem : Звонок и запрос ставки
+callCenterSystem -> apiGateway : Запрос ставки
+apiGateway -> rateService : Получение актуальной ставки
+rateService -> apiGateway : Отправка ставки
+apiGateway -> callCenterSystem : Ответ со ставкой
+
+fileGenerator -> sftpServer : Генерация и передача файла ставок
+sftpServer -> partnerCallCenter : Передача файла
+partnerCallCenter -> client : Консультация по ставкам
+@enduml

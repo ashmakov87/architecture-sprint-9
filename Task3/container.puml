@@ -1,0 +1,38 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+
+Person(client, "Клиент")
+System_Boundary(webLayer, "Web Layer") {
+    Container(website, "Сайт", "React, PHP")
+    Container(internetBank, "Интернет-банк", "ASP.NET")
+}
+
+System_Boundary(backendLayer, "Backend") {
+    Container(apiGateway, "API шлюз", "Spring Boot")
+    Container_Ext(abs, "АБС", "Delphi, PL-SQL")
+    Container(callCenter, "Кол-центр", "Java, Spring Boot")
+    Container(smsGateway, "СМС-шлюз", "External Provider")
+    Container(authService, "Сервис аутентификации", "Keycloak")
+}
+
+System_Boundary(dataLayer, "Data Layer") {
+    Container(database, "База данных", "MS SQL, Oracle")
+    Container(logging, "Система логирования", "ELK Stack")
+    Container(backup, "Резервное хранилище", "Cloud Storage")
+}
+
+client -> website : Подача заявки
+client -> internetBank : Подача заявки
+website -> apiGateway : Запросы
+internetBank -> apiGateway : Запросы
+apiGateway -> callCenter : Обмен данными
+apiGateway -> abs : Обмен данными
+apiGateway -> smsGateway : Уведомления
+apiGateway -> authService : Аутентификация
+abs -> database : Хранение данных
+abs -> logging : Логирование
+abs -> backup : Резервное копирование
+smsGateway -> client : Отправка уведомлений
+@enduml
