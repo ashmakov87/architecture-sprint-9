@@ -1,0 +1,18 @@
+@startuml
+!include <C4/C4_Context>
+
+LAYOUT_TOP_DOWN()
+
+Person(client, "Клиент")
+System(callCenter, "Кол-центр")
+System(partnerCallCenter, "Партнёрский кол-центр")
+System(bankSystem, "Система банка")
+System_Ext(sftpServer, "SFTP-сервер")
+
+client -> callCenter : Звонок для уточнения ставки
+callCenter -> bankSystem : Запрос актуальной ставки
+bankSystem -> callCenter : Отправка актуальной ставки
+bankSystem -> sftpServer : Генерация и передача файла ставок
+sftpServer -> partnerCallCenter : Получение файла ставок
+partnerCallCenter -> client : Консультация по ставкам
+@enduml

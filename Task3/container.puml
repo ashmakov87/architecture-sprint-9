@@ -1,0 +1,38 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+
+Person(client, "Клиент")
+System_Boundary(webLayer, "Web Layer") {
+    Container(website, "Сайт", "React, PHP")
+    Container(internetBank, "Интернет-банк", "ASP.NET")
+}
+
+System_Boundary(backendLayer, "Backend") {
+    Container(apiGateway, "API шлюз", "Spring Boot")
+    Container(abs_deposit, "Новый микросервис АБС для работы с депозитами", "Java")
+    Container(callCenter, "Кол-центр", "Java, Spring Boot")
+    Container(smsGateway, "СМС-шлюз", "External Provider")
+    Container(authService, "Сервис аутентификации", "Keycloak")
+}
+
+System_Boundary(dataLayer, "Data Layer") {
+    Container(database, "База данных", "MS SQL, Oracle")
+    Container(logging, "Система логирования", "ELK Stack")
+    Container(backup, "Резервное хранилище", "Cloud Storage")
+}
+
+client -> website : Подача заявки
+client -> internetBank : Подача заявки
+website -> callCenter : Передача заявки в кол центр
+internetBank -> apiGateway : Запросы
+apiGateway -> abs_deposit : Обмен данными
+apiGateway -> smsGateway : Уведомления
+apiGateway -> authService : Аутентификация
+abs_deposit -> database : Хранение данных
+abs_deposit -> logging : Логирование
+abs_deposit -> backup : Резервное копирование
+smsGateway -> client : Отправка уведомлений
+abs_deposit -> smsGateway : Уведомление об открытии депозита
+@enduml

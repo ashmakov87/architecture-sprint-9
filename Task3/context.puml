@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Context>
+
+LAYOUT_TOP_DOWN()
+
+Person(client, "Клиент")
+System(website, "Сайт")
+System(internetBank, "Интернет-банк")
+System_Ext(callCenter, "Кол-центр")
+System(backend, "Бэк-офис")
+System(database, "База данных")
+System(smsGateway, "СМС-шлюз")
+System(abs, "АБС")
+
+client -> website : Подача заявки
+client -> internetBank : Подача заявки
+website -> callCenter : Передача данных
+internetBank -> backend : Передача данных
+backend -> abs : Подтверждение депозита
+callCenter -> abs : Обработка заявки
+abs -> smsGateway : Уведомление клиента
+smsGateway -> client : Отправка подтверждения
+abs -> database : Хранение данных
+@enduml
