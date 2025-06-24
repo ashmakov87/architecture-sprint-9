@@ -11,7 +11,7 @@ System_Boundary(webLayer, "Web Layer") {
 
 System_Boundary(backendLayer, "Backend") {
     Container(apiGateway, "API шлюз", "Spring Boot")
-    Container_Ext(abs, "АБС", "Delphi, PL-SQL")
+    Container(abs_deposit, "Новый микросервис АБС для работы с депозитами", "Java")
     Container(callCenter, "Кол-центр", "Java, Spring Boot")
     Container(smsGateway, "СМС-шлюз", "External Provider")
     Container(authService, "Сервис аутентификации", "Keycloak")
@@ -25,14 +25,14 @@ System_Boundary(dataLayer, "Data Layer") {
 
 client -> website : Подача заявки
 client -> internetBank : Подача заявки
-website -> apiGateway : Запросы
+website -> callCenter : Передача заявки в кол центр
 internetBank -> apiGateway : Запросы
-apiGateway -> callCenter : Обмен данными
-apiGateway -> abs : Обмен данными
+apiGateway -> abs_deposit : Обмен данными
 apiGateway -> smsGateway : Уведомления
 apiGateway -> authService : Аутентификация
-abs -> database : Хранение данных
-abs -> logging : Логирование
-abs -> backup : Резервное копирование
+abs_deposit -> database : Хранение данных
+abs_deposit -> logging : Логирование
+abs_deposit -> backup : Резервное копирование
 smsGateway -> client : Отправка уведомлений
+abs_deposit -> smsGateway : Уведомление об открытии депозита
 @enduml
